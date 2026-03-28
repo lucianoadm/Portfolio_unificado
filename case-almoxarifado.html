@@ -11,6 +11,30 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
+
+/* Botão Voltar */
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 28px;
+    background: #f0ede4;
+    color: #5f6f52;
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 1.03rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+
+.btn-voltar:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateX(-6px);
+    box-shadow: 0 10px 25px rgba(95, 111, 82, 0.3);
+}
+        
         :root {
             --primary: #5f6f52;     
             --primary-dark: #4a5a3f;
@@ -196,6 +220,13 @@
         <p class="subtitle">Controle de Estoque e Materiais Orientado por Dados<br>
         <strong>Luciano</strong> | Transformando caos em controle, visibilidade e eficiência operacional</p>
     </header>
+
+    <!-- Botão Voltar -->
+    <div style="max-width: 1180px; margin: 0 auto; padding: 25px 20px 10px;">
+        <a href="index.html" class="btn-voltar">
+            ← Voltar para o Portfólio
+        </a>
+    </div>
 
     <main>
         <!-- Resumo Executivo -->
