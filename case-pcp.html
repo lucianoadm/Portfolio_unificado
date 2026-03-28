@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case PCP - Modelo Híbrido: Transformação de operações produtivas instáveis em processos previsíveis e eficientes.">
+    <meta name="author" content="Luciano">
+    <title>Case PCP - Modelo Híbrido | Luciano</title>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #5f6f52;     /* Verde Oliva principal */
+            --primary-dark: #4a5a3f;
+            --success: #6b8e4e;     /* Verde Oliva mais claro para positivo */
+            --danger: #c76a4e;      /* Tom terracota suave para negativo */
+            --accent: #8a9a6e;
+            --text: #2f2f2f;
+            --bg: #f5f2eb;         /* Bege/areia bem claro */
+            --card-bg: #fffaf0;    /* Creme suave para os cards */
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #e8e5d8 0%, #d8d4c4 100%);
+            padding: 70px 20px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        
+        header h1 {
+            font-size: 2.9rem;
+            margin-bottom: 10px;
+            color: #2f2f2f;
+        }
+        
+        header .subtitle {
+            font-size: 1.4rem;
+            color: #4a5a3f;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 34px;
+            margin-bottom: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .kpi {
+            background: #f8f5ed;
+            padding: 26px 22px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e8e5d8;
+            border-radius: 9999px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1.8s ease;
+        }
+        
+        .kpi h3 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+        }
+        
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .accent { color: var(--accent); }
+        
+        .section-title {
+            color: #2f2f2f;
+            border-left: 6px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 22px;
+            font-size: 1.55rem;
+        }
+        
+        .disclaimer {
+            font-size: 0.92rem;
+            color: #5f6f52;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #e8e5d8;
+            border-radius: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8e5d8;
+        }
+        
+        th {
+            background: #f0ede4;
+            font-weight: 600;
+            color: #4a5a3f;
+        }
+        
+        button {
+            padding: 15px 32px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(95, 111, 82, 0.35);
+        }
+        
+        #details { display: none; opacity: 0; transition: all 0.6s ease; }
+        #details.show { display: block; opacity: 1; }
+        
+        footer {
+            text-align: center;
+            padding: 50px 20px 40px;
+            color: #5f6f52;
+            font-size: 1rem;
+        }
+        
+        .contact-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case: Planejamento e Controle da Produção (PCP)</h1>
+        <p class="subtitle">Modelo Híbrido — Visual + Técnico<br>
+        <strong>Luciano</strong> | Transformando instabilidade produtiva em operações previsíveis e de alto desempenho</p>
+    </header>
+
+    <main>
+        <!-- Resumo Executivo -->
+        <article class="card">
+            <h2>Resumo Executivo</h2>
+            <p><strong>Especialista em estruturar e otimizar o PCP, transformo ambientes produtivos caóticos em operações previsíveis por meio de modelagem de capacidade, cronoanálise e controle robusto de ordens de produção.</strong></p>
+            
+            <div class="kpis">
+                <div class="kpi">
+                    <i data-lucide="truck" style="width:48px;height:48px;color:#c76a4e;margin-bottom:12px;"></i>
+                    <h3 class="negative">-32%</h3>
+                    <p>Atrasos em entregas</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:68%; background:#c76a4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="trending-up" style="width:48px;height:48px;color:#6b8e4e;margin-bottom:12px;"></i>
+                    <h3 class="positive">+28%</h3>
+                    <p>Eficiência operacional</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:72%; background:#6b8e4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="calendar-clock" style="width:48px;height:48px;color:#8a9a6e;margin-bottom:12px;"></i>
+                    <h3 class="accent">+41%</h3>
+                    <p>Previsibilidade da produção</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:78%; background:#8a9a6e;"></div></div>
+                </div>
+            </div>
+
+            <button type="button" id="toggleBtn" onclick="toggleDetails()">
+                <i data-lucide="chevron-down"></i>
+                Ver análise completa
+            </button>
+        </article>
+
+        <!-- Análise Detalhada -->
+        <div id="details">
+            <article class="card">
+                <h2 class="section-title">1. Contexto do Problema</h2>
+                <p>Ambiente com baixa previsibilidade, atrasos recorrentes e ausência de controle estruturado das ordens de produção, gerando desbalanceamento constante entre carga e capacidade instalada.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">2. Diagnóstico</h2>
+                <ul>
+                    <li>Ausência de tempos padrão confiáveis</li>
+                    <li>Falta de visibilidade consolidada das OPs</li>
+                    <li>Sem análise sistemática de capacidade × demanda</li>
+                    <li>Dados dispersos e não padronizados</li>
+                </ul>
+                <p><strong>Insight chave:</strong> A principal raiz estava na falta de modelagem clara da capacidade produtiva.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">3. Solução Implementada</h2>
+                <ul>
+                    <li>Estruturação de base de dados integrada</li>
+                    <li>Cronoanálise técnica para tempos padrão</li>
+                    <li>Modelagem de capacidade versus carga</li>
+                    <li>Desenvolvimento de KPIs visuais e acionáveis</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">4. Resultados Alcançados</h2>
+                <ul>
+                    <li>Identificação e tratamento prioritário de gargalos</li>
+                    <li>Melhoria expressiva no sequenciamento</li>
+                    <li>Redução significativa de atrasos e WIP</li>
+                    <li>Aumento da previsibilidade operacional</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Nota:</strong> Os dados e percentuais apresentados são fictícios, utilizados apenas para fins ilustrativos, respeitando normas de confidencialidade e sigilo contratual vigentes.
+                </div>
+            </article>
+
+            <!-- Como eu faria na prática -->
+            <article class="card">
+                <h2 class="section-title">Como eu faria na prática</h2>
+                <p>Exemplo simplificado de modelagem de capacidade que utilizo para identificar desbalanceamentos rapidamente:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recurso / Máquina</th>
+                            <th>Capacidade Disponível (h/mês)</th>
+                            <th>Carga Projetada (h/mês)</th>
+                            <th>Utilização</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Corte a Laser</td>
+                            <td>480</td>
+                            <td>520</td>
+                            <td style="color:#c76a4e;">108%</td>
+                            <td><strong>Gargalo</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Dobra CNC</td>
+                            <td>420</td>
+                            <td>380</td>
+                            <td style="color:#6b8e4e;">90%</td>
+                            <td>OK</td>
+                        </tr>
+                        <tr>
+                            <td>Soldagem</td>
+                            <td>360</td>
+                            <td>410</td>
+                            <td style="color:#c76a4e;">114%</td>
+                            <td><strong>Gargalo</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Resultado prático:</strong> Priorizo ações de aumento de capacidade ou realocação de carga nos recursos acima de 100% de utilização.</p>
+            </article>
+        </div>
+
+        <!-- Sobre mim -->
+        <article class="card">
+            <h2 class="section-title">Sobre mim</h2>
+            <p>Sou <strong>Luciano</strong>, especialista em Planejamento e Controle da Produção (PCP). Tenho experiência em diagnosticar e resolver problemas de desbalanceamento entre demanda e capacidade, utilizando ferramentas técnicas como cronoanálise, modelagem de capacidade e indicadores de desempenho.</p>
+            <p>Minha abordagem combina visão estratégica com execução técnica, sempre focada em entregar resultados mensuráveis: menos atrasos, mais eficiência e maior previsibilidade.</p>
+        </article>
+    </main>
+
+    <footer>
+        <p><strong>Entre em contato</strong></p>
+        <div class="contact-links">
+            <a href="https://linkedin.com/in/seu-perfil" target="_blank">LinkedIn</a> |
+            <a href="mailto:seuemail@exemplo.com">E-mail</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Luciano — Case demonstrativo para portfólio</p>
+    </footer>
+
+    <script>
+        // Inicializa ícones Lucide
+        lucide.createIcons();
+
+        function toggleDetails() {
+            const details = document.getElementById('details');
+            const btn = document.getElementById('toggleBtn');
+            
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                btn.innerHTML = `<i data-lucide="chevron-up"></i> Ocultar análise completa`;
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="chevron-down"></i> Ver análise completa`;
+                lucide.createIcons();
+            }
+        }
+        
+        // Fechar com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const details = document.getElementById('details');
+                if (details.classList.contains('show')) toggleDetails();
+            }
+        });
+    </script>
+</body>
+</html>

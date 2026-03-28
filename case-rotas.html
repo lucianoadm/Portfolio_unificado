@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case Otimização de Rotas com Heurística - Problema do Caixeiro Viajante aplicado em Excel.">
+    <meta name="author" content="Luciano">
+    <title>Case Otimização de Rotas | Heurística do Caixeiro Viajante | Luciano</title>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #5f6f52;     
+            --primary-dark: #4a5a3f;
+            --success: #6b8e4e;     
+            --danger: #c76a4e;      
+            --accent: #8a9a6e;
+            --text: #2f2f2f;
+            --bg: #f5f2eb;         
+            --card-bg: #fffaf0;    
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #e8e5d8 0%, #d8d4c4 100%);
+            padding: 70px 20px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        
+        header h1 {
+            font-size: 2.75rem;
+            margin-bottom: 10px;
+            color: #2f2f2f;
+        }
+        
+        header .subtitle {
+            font-size: 1.35rem;
+            color: #4a5a3f;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 34px;
+            margin-bottom: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .kpi {
+            background: #f8f5ed;
+            padding: 26px 22px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e8e5d8;
+            border-radius: 9999px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1.8s ease;
+        }
+        
+        .kpi h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+        }
+        
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .accent { color: var(--accent); }
+        
+        .section-title {
+            color: #2f2f2f;
+            border-left: 6px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 22px;
+            font-size: 1.55rem;
+        }
+        
+        .disclaimer {
+            font-size: 0.92rem;
+            color: #5f6f52;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #e8e5d8;
+            border-radius: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8e5d8;
+        }
+        
+        th {
+            background: #f0ede4;
+            font-weight: 600;
+            color: #4a5a3f;
+        }
+        
+        button {
+            padding: 15px 32px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(95, 111, 82, 0.35);
+        }
+        
+        #details { display: none; opacity: 0; transition: all 0.6s ease; }
+        #details.show { display: block; opacity: 1; }
+        
+        footer {
+            text-align: center;
+            padding: 50px 20px 40px;
+            color: #5f6f52;
+            font-size: 1rem;
+        }
+        
+        .contact-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+        
+        .code {
+            background: #f0ede4;
+            padding: 16px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case: Otimização de Rotas com Heurística</h1>
+        <p class="subtitle">Problema do Caixeiro Viajante (TSP) aplicado na prática<br>
+        <strong>Luciano</strong> | Transformando roteamento empírico em solução lógica e eficiente usando heurística</p>
+    </header>
+
+    <main>
+        <!-- Resumo Executivo -->
+        <article class="card">
+            <h2>Resumo Executivo</h2>
+            <p><strong>Desenvolvi uma solução prática para o clássico Problema do Caixeiro Viajante utilizando a heurística do Vizinho Mais Próximo (Nearest Neighbor) implementada em Excel, reduzindo significativamente distância total, tempo e custo operacional em cenários de visitas, entregas ou coletas.</strong></p>
+            
+            <div class="kpis">
+                <div class="kpi">
+                    <i data-lucide="map" style="width:48px;height:48px;color:#6b8e4e;margin-bottom:12px;"></i>
+                    <h3 class="positive">-27%</h3>
+                    <p>Distância total percorrida</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:72%; background:#6b8e4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="clock" style="width:48px;height:48px;color:#c76a4e;margin-bottom:12px;"></i>
+                    <h3 class="negative">-22%</h3>
+                    <p>Tempo estimado de rota</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:68%; background:#c76a4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="dollar-sign" style="width:48px;height:48px;color:#8a9a6e;margin-bottom:12px;"></i>
+                    <h3 class="accent">-19%</h3>
+                    <p>Custo operacional estimado</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:65%; background:#8a9a6e;"></div></div>
+                </div>
+            </div>
+
+            <button type="button" id="toggleBtn" onclick="toggleDetails()">
+                <i data-lucide="chevron-down"></i>
+                Ver análise completa
+            </button>
+        </article>
+
+        <!-- Análise Detalhada -->
+        <div id="details">
+            <article class="card">
+                <h2 class="section-title">1. Contexto do Problema</h2>
+                <p>Em situações que envolvem múltiplas visitas, entregas ou coletas de dados, surge o desafio clássico de definir a melhor sequência de pontos para minimizar a distância total percorrida, reduzindo tempo e custo operacional.</p>
+                <p><strong>Limitações encontradas:</strong> Número elevado de combinações possíveis, impossibilidade de testar todas as rotas e rotas definidas de forma puramente empírica, gerando desperdício de tempo e combustível.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">2. Diagnóstico</h2>
+                <p>Perguntas-chave que guiaram o trabalho:</p>
+                <ul>
+                    <li>Qual o impacto da ordem de visita no custo total da rota?</li>
+                    <li>É viável buscar a solução matemática ótima?</li>
+                    <li>Qual o trade-off entre tempo de processamento e qualidade da solução?</li>
+                    <li>Existe um método simples que entregue ganho significativo?</li>
+                </ul>
+                <p><strong>Insight central:</strong> O problema não era encontrar a rota perfeita, mas encontrar uma boa rota de forma viável e rápida.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">3. Solução Construída</h2>
+                <p><strong>Heurística aplicada:</strong> Vizinho Mais Próximo (Nearest Neighbor)</p>
+                <ol>
+                    <li>Inicia-se em um ponto de origem</li>
+                    <li>Segue-se para o ponto mais próximo ainda não visitado</li>
+                    <li>Repete-se o processo até todos os pontos serem visitados</li>
+                    <li>Retorna ao ponto de origem (circuito)</li>
+                </ol>
+                
+                <p><strong>Implementação em Excel:</strong></p>
+                <ul>
+                    <li>Construção de matriz de distâncias entre todos os pontos</li>
+                    <li>Controle de pontos visitados</li>
+                    <li>Cálculo incremental da rota e distância total</li>
+                </ul>
+                
+                <p><strong>Diferencial técnico:</strong> Aplicação de algoritmo heurístico em ferramenta acessível (Excel), transformando um problema combinatorial complexo em uma solução prática e replicável.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">4. Resultados Alcançados</h2>
+                <ul>
+                    <li>Redução significativa da distância total percorrida</li>
+                    <li>Padronização da lógica de definição de rotas</li>
+                    <li>Solução rápida e replicável para diferentes cenários</li>
+                    <li>Maior previsibilidade e controle logístico</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Nota:</strong> Os dados e percentuais apresentados são fictícios e baseados em simulações para fins didáticos e ilustrativos, respeitando normas de confidencialidade.
+                </div>
+            </article>
+
+            <!-- Como eu faria na prática -->
+            <article class="card">
+                <h2 class="section-title">Como eu faria na prática</h2>
+                <p>Exemplo simplificado de aplicação da heurística do Vizinho Mais Próximo:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Etapa</th>
+                            <th>Ponto Atual</th>
+                            <th>Próximo Ponto</th>
+                            <th>Distância (km)</th>
+                            <th>Distância Acumulada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Base</td>
+                            <td>Cliente A</td>
+                            <td>12</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Cliente A</td>
+                            <td>Cliente D</td>
+                            <td>8</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Cliente D</td>
+                            <td>Cliente B</td>
+                            <td>15</td>
+                            <td>35</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Cliente B</td>
+                            <td>Cliente C</td>
+                            <td>9</td>
+                            <td>44</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Cliente C</td>
+                            <td>Base</td>
+                            <td>18</td>
+                            <td>62</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Resultado prático:</strong> Rota otimizada de 62 km contra 89 km da rota empírica anterior — redução de 27% na distância total.</p>
+            </article>
+
+            <!-- Evolução -->
+            <article class="card">
+                <h2 class="section-title">Evolução e Próximos Passos</h2>
+                <ul>
+                    <li>Teste de outras heurísticas (2-opt, Simulated Annealing)</li>
+                    <li>Automatização completa em Python</li>
+                    <li>Comparação entre múltiplas soluções e a solução ótima (quando viável)</li>
+                    <li>Integração com ferramentas de geolocalização (Google Maps API, etc.)</li>
+                </ul>
+            </article>
+        </div>
+
+        <!-- Sobre mim -->
+        <article class="card">
+            <h2 class="section-title">Sobre mim</h2>
+            <p>Sou <strong>Luciano</strong>, profissional com visão analítica e capacidade de aplicar conceitos avançados de otimização em ferramentas acessíveis. Este case demonstra minha habilidade em modelar problemas complexos de logística e resolvê-los de forma prática, mesmo sem sistemas sofisticados.</p>
+            <p>Combino conhecimento técnico em heurísticas com pragmatismo operacional para gerar valor real em cenários de roteamento e logística.</p>
+        </article>
+    </main>
+
+    <footer>
+        <p><strong>Entre em contato</strong></p>
+        <div class="contact-links">
+            <a href="https://linkedin.com/in/seu-perfil" target="_blank">LinkedIn</a> |
+            <a href="mailto:seuemail@exemplo.com">E-mail</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Luciano — Case demonstrativo para portfólio</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleDetails() {
+            const details = document.getElementById('details');
+            const btn = document.getElementById('toggleBtn');
+            
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                btn.innerHTML = `<i data-lucide="chevron-up"></i> Ocultar análise completa`;
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="chevron-down"></i> Ver análise completa`;
+                lucide.createIcons();
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const details = document.getElementById('details');
+                if (details.classList.contains('show')) toggleDetails();
+            }
+        });
+    </script>
+</body>
+</html>

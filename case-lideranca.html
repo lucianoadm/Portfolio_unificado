@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case Liderança de Produção Orientada por Dados - Transformando gestão de equipe com dados e estrutura.">
+    <meta name="author" content="Luciano">
+    <title>Case Liderança de Produção | Orientada por Dados | Luciano</title>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #5f6f52;     
+            --primary-dark: #4a5a3f;
+            --success: #6b8e4e;     
+            --danger: #c76a4e;      
+            --accent: #8a9a6e;
+            --text: #2f2f2f;
+            --bg: #f5f2eb;         
+            --card-bg: #fffaf0;    
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #e8e5d8 0%, #d8d4c4 100%);
+            padding: 70px 20px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        
+        header h1 {
+            font-size: 2.75rem;
+            margin-bottom: 10px;
+            color: #2f2f2f;
+        }
+        
+        header .subtitle {
+            font-size: 1.35rem;
+            color: #4a5a3f;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 34px;
+            margin-bottom: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .kpi {
+            background: #f8f5ed;
+            padding: 26px 22px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e8e5d8;
+            border-radius: 9999px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1.8s ease;
+        }
+        
+        .kpi h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+        }
+        
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .accent { color: var(--accent); }
+        
+        .section-title {
+            color: #2f2f2f;
+            border-left: 6px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 22px;
+            font-size: 1.55rem;
+        }
+        
+        .disclaimer {
+            font-size: 0.92rem;
+            color: #5f6f52;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #e8e5d8;
+            border-radius: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8e5d8;
+        }
+        
+        th {
+            background: #f0ede4;
+            font-weight: 600;
+            color: #4a5a3f;
+        }
+        
+        button {
+            padding: 15px 32px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(95, 111, 82, 0.35);
+        }
+        
+        #details { display: none; opacity: 0; transition: all 0.6s ease; }
+        #details.show { display: block; opacity: 1; }
+        
+        footer {
+            text-align: center;
+            padding: 50px 20px 40px;
+            color: #5f6f52;
+            font-size: 1rem;
+        }
+        
+        .contact-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case: Liderança de Produção Orientada por Dados</h1>
+        <p class="subtitle">Gestão de Equipe com +60 colaboradores em múltiplos turnos<br>
+        <strong>Luciano</strong> | Transformando liderança baseada em experiência em gestão estruturada e orientada por dados</p>
+    </header>
+
+    <main>
+        <!-- Resumo Executivo -->
+        <article class="card">
+            <h2>Resumo Executivo</h2>
+            <p><strong>Assumi a liderança de uma equipe de mais de 60 colaboradores em múltiplos turnos e implementei uma gestão orientada por dados, transformando variabilidade operacional em previsibilidade e desempenho consistente.</strong></p>
+            
+            <div class="kpis">
+                <div class="kpi">
+                    <i data-lucide="users" style="width:48px;height:48px;color:#6b8e4e;margin-bottom:12px;"></i>
+                    <h3 class="positive">+24%</h3>
+                    <p>Produtividade média</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:78%; background:#6b8e4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="clock" style="width:48px;height:48px;color:#c76a4e;margin-bottom:12px;"></i>
+                    <h3 class="negative">-31%</h3>
+                    <p>Atrasos e paradas</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:65%; background:#c76a4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="target" style="width:48px;height:48px;color:#8a9a6e;margin-bottom:12px;"></i>
+                    <h3 class="accent">+19%</h3>
+                    <p>Eficiência operacional</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:72%; background:#8a9a6e;"></div></div>
+                </div>
+            </div>
+
+            <button type="button" id="toggleBtn" onclick="toggleDetails()">
+                <i data-lucide="chevron-down"></i>
+                Ver análise completa
+            </button>
+        </article>
+
+        <!-- Análise Detalhada -->
+        <div id="details">
+            <article class="card">
+                <h2 class="section-title">1. Contexto do Problema</h2>
+                <p>Na liderança de uma equipe com mais de 60 colaboradores distribuídos em múltiplos turnos, enfrentávamos baixa padronização operacional, alta variabilidade na produção, ausência de indicadores claros por turno e decisões baseadas principalmente em experiência.</p>
+                <p><strong>Situação crítica:</strong> Atrasos frequentes, gargalos recorrentes, retrabalho elevado e baixo engajamento da equipe.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">2. Diagnóstico Realizado</h2>
+                <p>Perguntas-chave que guiaram o diagnóstico:</p>
+                <ul>
+                    <li>Qual é a produtividade real por turno?</li>
+                    <li>Onde estão os principais desvios e gargalos?</li>
+                    <li>Qual o impacto real das paradas não programadas?</li>
+                    <li>A equipe está corretamente alocada conforme a demanda?</li>
+                </ul>
+                <p><strong>Lacunas identificadas:</strong> Falta de controle estruturado por turno, ausência de indicadores operacionais, baixa padronização de tarefas e pouca integração com o PCP.</p>
+                <p><strong>Insight central:</strong> O problema não estava na equipe — estava na ausência de gestão estruturada com dados.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">3. Solução Implementada</h2>
+                <ul>
+                    <li>Implantação de controle diário de produção via Excel</li>
+                    <li>Apontamento detalhado por turno (volume produzido, paradas e eficiência)</li>
+                    <li>Monitoramento diário de produtividade e eficiência</li>
+                    <li>Reuniões rápidas de alinhamento no início e fim de turno</li>
+                    <li>Redistribuição dinâmica da equipe conforme gargalos identificados</li>
+                </ul>
+                <p><strong>Métricas acompanhadas:</strong> Produtividade por turno, Eficiência (%), Tempo de parada e Volume produzido.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">4. Resultados Alcançados</h2>
+                <ul>
+                    <li>Aumento significativo da produtividade média</li>
+                    <li>Redução expressiva de atrasos e paradas</li>
+                    <li>Melhor organização e equilíbrio da equipe entre turnos</li>
+                    <li>Maior controle operacional e previsibilidade da produção</li>
+                    <li>Maior engajamento da equipe com visibilidade clara de resultados</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Nota:</strong> Os dados e percentuais apresentados são fictícios, utilizados apenas para fins ilustrativos, respeitando normas de confidencialidade e sigilo contratual vigentes.
+                </div>
+            </article>
+
+            <!-- Como eu faria na prática -->
+            <article class="card">
+                <h2 class="section-title">Como eu faria na prática</h2>
+                <p>Exemplo de acompanhamento diário que utilizo para liderar equipes com dados:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Turno</th>
+                            <th>Meta de Produção</th>
+                            <th>Realizado</th>
+                            <th>Eficiência</th>
+                            <th>Paradas (min)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Manhã</td>
+                            <td>1.200 un</td>
+                            <td>1.380 un</td>
+                            <td style="color:#6b8e4e;">115%</td>
+                            <td>45</td>
+                            <td style="color:#6b8e4e;"><strong>Acima da meta</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Tarde</td>
+                            <td>1.150 un</td>
+                            <td>980 un</td>
+                            <td style="color:#c76a4e;">85%</td>
+                            <td>120</td>
+                            <td style="color:#c76a4e;"><strong>Abaixo</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Noite</td>
+                            <td>1.100 un</td>
+                            <td>1.210 un</td>
+                            <td style="color:#6b8e4e;">110%</td>
+                            <td>30</td>
+                            <td style="color:#6b8e4e;"><strong>Acima da meta</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Resultado prático:</strong> Identificação rápida de desvios por turno, permitindo rebalanceamento imediato da equipe e atuação direta nos gargalos.</p>
+            </article>
+        </div>
+
+        <!-- Sobre mim -->
+        <article class="card">
+            <h2 class="section-title">Sobre mim</h2>
+            <p>Sou <strong>Luciano</strong>, especialista em Liderança de Produção e PCP. Tenho experiência em gerir equipes grandes em ambientes de múltiplos turnos, substituindo a gestão intuitiva por uma liderança estruturada, transparente e orientada por dados.</p>
+            <p>Minha abordagem combina autoridade técnica com desenvolvimento de pessoas, sempre focada em entregar resultados mensuráveis através de controles simples, porém poderosos.</p>
+        </article>
+    </main>
+
+    <footer>
+        <p><strong>Entre em contato</strong></p>
+        <div class="contact-links">
+            <a href="https://linkedin.com/in/seu-perfil" target="_blank">LinkedIn</a> |
+            <a href="mailto:seuemail@exemplo.com">E-mail</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Luciano — Case demonstrativo para portfólio</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleDetails() {
+            const details = document.getElementById('details');
+            const btn = document.getElementById('toggleBtn');
+            
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                btn.innerHTML = `<i data-lucide="chevron-up"></i> Ocultar análise completa`;
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="chevron-down"></i> Ver análise completa`;
+                lucide.createIcons();
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const details = document.getElementById('details');
+                if (details.classList.contains('show')) toggleDetails();
+            }
+        });
+    </script>
+</body>
+</html>

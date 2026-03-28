@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case Monitoramento de Temperatura e Umidade em Tempo Real com Arduino e Excel.">
+    <meta name="author" content="Luciano">
+    <title>Case Monitoramento em Tempo Real | Arduino + Excel | Luciano</title>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #5f6f52;     
+            --primary-dark: #4a5a3f;
+            --success: #6b8e4e;     
+            --danger: #c76a4e;      
+            --accent: #8a9a6e;
+            --text: #2f2f2f;
+            --bg: #f5f2eb;         
+            --card-bg: #fffaf0;    
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #e8e5d8 0%, #d8d4c4 100%);
+            padding: 70px 20px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        
+        header h1 {
+            font-size: 2.75rem;
+            margin-bottom: 10px;
+            color: #2f2f2f;
+        }
+        
+        header .subtitle {
+            font-size: 1.35rem;
+            color: #4a5a3f;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 34px;
+            margin-bottom: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .kpi {
+            background: #f8f5ed;
+            padding: 26px 22px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e8e5d8;
+            border-radius: 9999px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1.8s ease;
+        }
+        
+        .kpi h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+        }
+        
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .accent { color: var(--accent); }
+        
+        .section-title {
+            color: #2f2f2f;
+            border-left: 6px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 22px;
+            font-size: 1.55rem;
+        }
+        
+        .disclaimer {
+            font-size: 0.92rem;
+            color: #5f6f52;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #e8e5d8;
+            border-radius: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8e5d8;
+        }
+        
+        th {
+            background: #f0ede4;
+            font-weight: 600;
+            color: #4a5a3f;
+        }
+        
+        button {
+            padding: 15px 32px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(95, 111, 82, 0.35);
+        }
+        
+        #details { display: none; opacity: 0; transition: all 0.6s ease; }
+        #details.show { display: block; opacity: 1; }
+        
+        footer {
+            text-align: center;
+            padding: 50px 20px 40px;
+            color: #5f6f52;
+            font-size: 1rem;
+        }
+        
+        .contact-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+        
+        .highlight {
+            background: #e8e5d8;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case: Monitoramento de Temperatura e Umidade em Tempo Real</h1>
+        <p class="subtitle">Integração Arduino + Excel — Transformando dados físicos em informação estratégica<br>
+        <strong>Luciano</strong> | Solução de baixo custo com dashboard em tempo real</p>
+    </header>
+
+    <main>
+        <!-- Resumo Executivo -->
+        <article class="card">
+            <h2>Resumo Executivo</h2>
+            <p><strong>Desenvolvi uma solução completa de baixo custo para monitoramento contínuo de temperatura e umidade em ambientes críticos, integrando hardware (Arduino) com análise em tempo real no Excel.</strong></p>
+            
+            <div class="kpis">
+                <div class="kpi">
+                    <i data-lucide="thermometer" style="width:48px;height:48px;color:#c76a4e;margin-bottom:12px;"></i>
+                    <h3 class="accent">±0,5°C</h3>
+                    <p>Precisão de temperatura</p>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="droplet" style="width:48px;height:48px;color:#6b8e4e;margin-bottom:12px;"></i>
+                    <h3 class="accent">±2%</h3>
+                    <p>Precisão de umidade</p>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="activity" style="width:48px;height:48px;color:#8a9a6e;margin-bottom:12px;"></i>
+                    <h3 class="positive">Tempo Real</h3>
+                    <p>Atualização contínua</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:100%; background:#8a9a6e;"></div></div>
+                </div>
+            </div>
+
+            <button type="button" id="toggleBtn" onclick="toggleDetails()">
+                <i data-lucide="chevron-down"></i>
+                Ver análise completa
+            </button>
+        </article>
+
+        <!-- Análise Detalhada -->
+        <div id="details">
+            <article class="card">
+                <h2 class="section-title">1. Contexto do Problema</h2>
+                <p>Ambientes sensíveis como laboratórios biológicos, indústrias alimentícias, químicas, museus e áreas industriais controladas exigem monitoramento contínuo de temperatura e umidade para garantir qualidade, segurança e conformidade.</p>
+                <p><strong>Problemas identificados:</strong> Monitoramento manual ou inexistente, ausência de histórico confiável, baixa capacidade de reação a variações e alto custo de sistemas profissionais.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">2. Diagnóstico</h2>
+                <p>Perguntas-chave que guiaram o desenvolvimento:</p>
+                <ul>
+                    <li>Como coletar dados ambientais de forma contínua e confiável?</li>
+                    <li>É possível criar uma solução acessível e de baixo custo?</li>
+                    <li>Como integrar dados do mundo físico diretamente ao ambiente analítico?</li>
+                    <li>Como permitir visualização e análise em tempo real?</li>
+                </ul>
+                <p><strong>Insight central:</strong> O problema não era simplesmente medir temperatura e umidade — era transformar essas medições em informação acionável em tempo real.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">3. Solução Construída</h2>
+                <div class="highlight">
+                    <strong>Arquitetura da solução:</strong><br>
+                    Arduino (Sensor DHT) → Comunicação Serial (USB) → Excel com Data Streamer → Dashboard em tempo real
+                </div>
+                
+                <p><strong>Componentes utilizados:</strong></p>
+                <ul>
+                    <li>Arduino Leonardo</li>
+                    <li>Sensor DHT22 (Temperatura + Umidade)</li>
+                    <li>Comunicação via porta serial USB</li>
+                    <li>Excel + Suplemento Data Streamer</li>
+                </ul>
+                
+                <p><strong>Funcionalidades entregues:</strong></p>
+                <ul>
+                    <li>Leitura contínua de temperatura e umidade</li>
+                    <li>Registro automático em planilha estruturada</li>
+                    <li>Dashboard com valores atuais, gráficos de tendência e variação histórica</li>
+                    <li>Simulação de variações com pastilha Peltier para validação</li>
+                </ul>
+                
+                <p><strong>Diferencial técnico:</strong> Integração direta entre hardware e ferramenta analítica acessível, criando um sistema replicável, escalável e de baixo custo.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">4. Resultados Alcançados</h2>
+                <ul>
+                    <li>Monitoramento contínuo e automático em tempo real</li>
+                    <li>Visualização imediata de variações ambientais</li>
+                    <li>Registro histórico completo e confiável</li>
+                    <li>Substituição eficaz de controle manual</li>
+                    <li>Redução significativa de risco operacional</li>
+                    <li>Solução implementada com custo extremamente baixo</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Nota:</strong> Este case é baseado em um protótipo funcional desenvolvido para demonstração técnica. Os valores apresentados são ilustrativos.
+                </div>
+            </article>
+
+            <!-- Como eu faria na prática -->
+            <article class="card">
+                <h2 class="section-title">Como eu faria na prática</h2>
+                <p>Exemplo do dashboard em tempo real desenvolvido no Excel:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Horário</th>
+                            <th>Temperatura (°C)</th>
+                            <th>Umidade (%)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14:32</td>
+                            <td style="color:#c76a4e;">23,8</td>
+                            <td>58</td>
+                            <td style="color:#6b8e4e;"><strong>Normal</strong></td>
+                        </tr>
+                        <tr>
+                            <td>14:33</td>
+                            <td style="color:#c76a4e;">24,1</td>
+                            <td>57</td>
+                            <td style="color:#6b8e4e;"><strong>Normal</strong></td>
+                        </tr>
+                        <tr>
+                            <td>14:34</td>
+                            <td style="color:#ef4444;">26,5</td>
+                            <td>62</td>
+                            <td style="color:#c76a4e;"><strong>Atenção</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Benefício prático:</strong> Qualquer desvio é identificado imediatamente, permitindo ação rápida antes que afete materiais ou processos sensíveis.</p>
+            </article>
+
+            <!-- Aplicabilidade -->
+            <article class="card">
+                <h2 class="section-title">Aplicabilidade da Solução</h2>
+                <ul>
+                    <li>Controle de qualidade em indústrias alimentícias e farmacêuticas</li>
+                    <li>Monitoramento ambiental em laboratórios e salas limpas</li>
+                    <li>Logística de armazenamento de produtos sensíveis</li>
+                    <li>Conservação de acervos em museus e bibliotecas</li>
+                    <li>Ambientes industriais com exigência de climatização</li>
+                </ul>
+            </article>
+
+            <!-- Evolução -->
+            <article class="card">
+                <h2 class="section-title">Evolução (Versão 2)</h2>
+                <ul>
+                    <li>Integração com Power BI para dashboards online</li>
+                    <li>Armazenamento em nuvem (Google Sheets ou banco de dados)</li>
+                    <li>Alertas automáticos via e-mail ou WhatsApp</li>
+                    <li>Suporte a múltiplos sensores simultâneos</li>
+                    <li>Evolução para sistema IoT completo com ESP32</li>
+                </ul>
+            </article>
+        </div>
+
+        <!-- Sobre mim -->
+        <article class="card">
+            <h2 class="section-title">Sobre mim</h2>
+            <p>Sou <strong>Luciano</strong>, profissional com forte capacidade de conectar o mundo físico ao universo dos dados. Este case demonstra minha habilidade em desenvolver soluções completas — desde a captura de dados via sensores até a transformação em informação estratégica visual e acionável.</p>
+            <p>Combino conhecimentos de hardware, automação e análise de dados para criar soluções práticas, acessíveis e de alto impacto.</p>
+        </article>
+    </main>
+
+    <footer>
+        <p><strong>Entre em contato</strong></p>
+        <div class="contact-links">
+            <a href="https://linkedin.com/in/seu-perfil" target="_blank">LinkedIn</a> |
+            <a href="mailto:seuemail@exemplo.com">E-mail</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Luciano — Case demonstrativo para portfólio</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleDetails() {
+            const details = document.getElementById('details');
+            const btn = document.getElementById('toggleBtn');
+            
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                btn.innerHTML = `<i data-lucide="chevron-up"></i> Ocultar análise completa`;
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="chevron-down"></i> Ver análise completa`;
+                lucide.createIcons();
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const details = document.getElementById('details');
+                if (details.classList.contains('show')) toggleDetails();
+            }
+        });
+    </script>
+</body>
+</html>

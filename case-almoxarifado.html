@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case Almoxarifado - Gestão de Estoque e Controle de Materiais orientado por dados.">
+    <meta name="author" content="Luciano">
+    <title>Case Almoxarifado | Gestão de Estoque | Luciano</title>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #5f6f52;     
+            --primary-dark: #4a5a3f;
+            --success: #6b8e4e;     
+            --danger: #c76a4e;      
+            --accent: #8a9a6e;
+            --text: #2f2f2f;
+            --bg: #f5f2eb;         
+            --card-bg: #fffaf0;    
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #e8e5d8 0%, #d8d4c4 100%);
+            padding: 70px 20px 50px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #2f2f2f;
+        }
+        
+        header .subtitle {
+            font-size: 1.35rem;
+            color: #4a5a3f;
+            max-width: 780px;
+            margin: 0 auto;
+        }
+        
+        main {
+            max-width: 1180px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            padding: 34px;
+            margin-bottom: 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .kpi {
+            background: #f8f5ed;
+            padding: 26px 22px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e8e5d8;
+            border-radius: 9999px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 1.8s ease;
+        }
+        
+        .kpi h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+        }
+        
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .accent { color: var(--accent); }
+        
+        .section-title {
+            color: #2f2f2f;
+            border-left: 6px solid var(--primary);
+            padding-left: 18px;
+            margin-bottom: 22px;
+            font-size: 1.55rem;
+        }
+        
+        .disclaimer {
+            font-size: 0.92rem;
+            color: #5f6f52;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #e8e5d8;
+            border-radius: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8e5d8;
+        }
+        
+        th {
+            background: #f0ede4;
+            font-weight: 600;
+            color: #4a5a3f;
+        }
+        
+        button {
+            padding: 15px 32px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(95, 111, 82, 0.35);
+        }
+        
+        #details { display: none; opacity: 0; transition: all 0.6s ease; }
+        #details.show { display: block; opacity: 1; }
+        
+        footer {
+            text-align: center;
+            padding: 50px 20px 40px;
+            color: #5f6f52;
+            font-size: 1rem;
+        }
+        
+        .contact-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case: Gestão de Almoxarifado</h1>
+        <p class="subtitle">Controle de Estoque e Materiais Orientado por Dados<br>
+        <strong>Luciano</strong> | Transformando caos em controle, visibilidade e eficiência operacional</p>
+    </header>
+
+    <main>
+        <!-- Resumo Executivo -->
+        <article class="card">
+            <h2>Resumo Executivo</h2>
+            <p><strong>Especialista em estruturar e otimizar almoxarifados, transformo ambientes com baixa confiabilidade de estoque em operações organizadas, rastreáveis e orientadas por dados.</strong></p>
+            
+            <div class="kpis">
+                <div class="kpi">
+                    <i data-lucide="package-check" style="width:48px;height:48px;color:#6b8e4e;margin-bottom:12px;"></i>
+                    <h3 class="positive">+94%</h3>
+                    <p>Acuracidade de estoque</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:94%; background:#6b8e4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="trending-down" style="width:48px;height:48px;color:#c76a4e;margin-bottom:12px;"></i>
+                    <h3 class="negative">-45%</h3>
+                    <p>Perdas e desperdícios</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:68%; background:#c76a4e;"></div></div>
+                </div>
+                <div class="kpi">
+                    <i data-lucide="bar-chart-3" style="width:48px;height:48px;color:#8a9a6e;margin-bottom:12px;"></i>
+                    <h3 class="accent">+3.2x</h3>
+                    <p>Visibilidade e controle</p>
+                    <div class="progress-container"><div class="progress-bar" style="width:85%; background:#8a9a6e;"></div></div>
+                </div>
+            </div>
+
+            <button type="button" id="toggleBtn" onclick="toggleDetails()">
+                <i data-lucide="chevron-down"></i>
+                Ver análise completa
+            </button>
+        </article>
+
+        <!-- Análise Detalhada -->
+        <div id="details">
+            <article class="card">
+                <h2 class="section-title">1. Contexto do Problema</h2>
+                <p>O almoxarifado operava sem controle estruturado, com registros inconsistentes e ausência de rastreabilidade. Não havia visibilidade clara sobre quantidade real em estoque, consumo por setor, materiais críticos ou giro de estoque.</p>
+                <p><strong>Consequências diretas:</strong> Compras desnecessárias, falta de materiais essenciais, capital parado e baixa confiabilidade nos dados para tomada de decisão.</p>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">2. Diagnóstico</h2>
+                <ul>
+                    <li>Divergência constante entre estoque físico e sistema</li>
+                    <li>Falta de padronização nas entradas e saídas</li>
+                    <li>Ausência de classificação por tipo de material</li>
+                    <li>Perdas operacionais e retrabalho frequente</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">3. Abordagem Analítica</h2>
+                <ul>
+                    <li>Estruturação completa da base de dados de materiais</li>
+                    <li>Padronização de processos de movimentação (entrada/saída)</li>
+                    <li>Implementação de controle por categoria, unidade e responsável</li>
+                    <li>Criação de indicadores gerenciais e dashboard</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">4. Solução Desenvolvida</h2>
+                <p><strong>Ferramenta principal:</strong> Excel Avançado com estrutura modular.</p>
+                <ul>
+                    <li><strong>Cadastro de Materiais:</strong> Código, Descrição, Categoria, Unidade</li>
+                    <li><strong>Movimentações:</strong> Tipo (Entrada/Saída), Quantidade, Data, Setor e Responsável</li>
+                    <li><strong>Controle de Estoque:</strong> Saldo automático, Estoque mínimo, Status (OK / Crítico)</li>
+                    <li><strong>Base Analítica:</strong> Histórico completo e dados para dashboard</li>
+                </ul>
+            </article>
+
+            <article class="card">
+                <h2 class="section-title">5. Resultados Alcançados</h2>
+                <ul>
+                    <li>Aumento significativo da acuracidade do estoque</li>
+                    <li>Redução expressiva de perdas e desperdícios</li>
+                    <li>Maior visibilidade e controle operacional</li>
+                    <li>Otimização de compras e redução de capital imobilizado</li>
+                    <li>Base confiável para integração futura com PCP</li>
+                </ul>
+                <div class="disclaimer">
+                    <strong>Nota:</strong> Os dados e percentuais apresentados são fictícios, utilizados apenas para fins ilustrativos, respeitando normas de confidencialidade e sigilo contratual vigentes.
+                </div>
+            </article>
+
+            <!-- Como eu faria na prática -->
+            <article class="card">
+                <h2 class="section-title">Como eu faria na prática</h2>
+                <p>Exemplo de estrutura de controle que implemento para transformar o almoxarifado:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Itens Cadastrados</th>
+                            <th>Saldo Atual</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Consumíveis</td>
+                            <td>87</td>
+                            <td>2.340 un</td>
+                            <td>800 un</td>
+                            <td style="color:#6b8e4e;"><strong>OK</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Ferramentas</td>
+                            <td>24</td>
+                            <td>156 un</td>
+                            <td>200 un</td>
+                            <td style="color:#c76a4e;"><strong>Crítico</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Matéria-prima</td>
+                            <td>41</td>
+                            <td>8.920 kg</td>
+                            <td>5.000 kg</td>
+                            <td style="color:#6b8e4e;"><strong>OK</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Resultado prático:</strong> Identificação imediata de riscos de falta e excesso, permitindo ações preventivas e planejamento mais assertivo de compras.</p>
+            </article>
+        </div>
+
+        <!-- Sobre mim -->
+        <article class="card">
+            <h2 class="section-title">Sobre mim</h2>
+            <p>Sou <strong>Luciano</strong>, especialista em organização e controle operacional. Tenho experiência em estruturar almoxarifados do zero, transformando ambientes desorganizados em processos confiáveis, rastreáveis e orientados por dados.</p>
+            <p>Minha abordagem combina rigor técnico com visão prática, sempre buscando conectar estoque, operação e tomada de decisão estratégica.</p>
+        </article>
+    </main>
+
+    <footer>
+        <p><strong>Entre em contato</strong></p>
+        <div class="contact-links">
+            <a href="https://linkedin.com/in/seu-perfil" target="_blank">LinkedIn</a> |
+            <a href="mailto:seuemail@exemplo.com">E-mail</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.9rem;">© 2026 Luciano — Case demonstrativo para portfólio</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleDetails() {
+            const details = document.getElementById('details');
+            const btn = document.getElementById('toggleBtn');
+            
+            details.classList.toggle('show');
+            
+            if (details.classList.contains('show')) {
+                btn.innerHTML = `<i data-lucide="chevron-up"></i> Ocultar análise completa`;
+                lucide.createIcons();
+            } else {
+                btn.innerHTML = `<i data-lucide="chevron-down"></i> Ver análise completa`;
+                lucide.createIcons();
+            }
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const details = document.getElementById('details');
+                if (details.classList.contains('show')) toggleDetails();
+            }
+        });
+    </script>
+</body>
+</html>
